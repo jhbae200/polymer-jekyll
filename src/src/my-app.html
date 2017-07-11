@@ -24,7 +24,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="/bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="/src/my-icons.html">
 
-<link rel="lazy-import" href="/src/my-view1.html">
+<link rel="lazy-import" href="/src/my-view1">
 <link rel="lazy-import" href="/src/my-view2.html">
 <link rel="lazy-import" href="/src/my-view3.html">
 <link rel="lazy-import" href="/src/my-view404.html">
@@ -77,6 +77,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 color: var(--paper-grey-700);
                 line-height: 40px;
             }
+
             .drawer-list hr {
                 background-color: #e8e8e8;
                 border: none;
@@ -160,18 +161,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
             constructor() {
                 super();
-
-                // Get root pattern for app-route, for more info about `rootPath` see:
-                // https://www.polymer-project.org/2.0/docs/upgrade#urls-in-templates
             }
 
             _routePageChanged(page) {
-                // Polymer 2.0 will call with `undefined` on initialization.
-                // Ignore until we are properly called with a string.
-                if (page === undefined) {
-                    return;
-                }
-
                 // If no page was found in the route data, page will be an empty string.
                 // Deault to 'view1' in that case.
                 this.page = page || 'view1';
@@ -184,7 +176,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
             _pageChanged(page) {
                 // Load page import on demand. Show 404 page if fails
-                let resolvedPageUrl = this.resolveUrl('../my-' + page + '.html');
+                let resolvedPageUrl = this.resolveUrl('../my-' + page);
                 Polymer.importHref(
                     resolvedPageUrl,
                     null,
