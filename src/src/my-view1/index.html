@@ -1,0 +1,143 @@
+---
+---
+<!--
+@license
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="/bower_components/polymer/polymer-element.html">
+<link rel="import" href="/bower_components/app-layout/app-grid/app-grid-style.html">
+<link rel="import" href="/bower_components/paper-card/paper-card.html">
+<link rel="import" href="/bower_components/paper-styles/paper-styles.html">
+<link rel="import" href="/bower_components/paper-button/paper-button.html">
+
+<link rel="import" href="/src/pagination/my-page-link.html">
+<link rel="import" href="/src/pagination/my-pagination.html">
+
+<dom-module id="my-view1">
+    <template>
+        <style>
+            :host {
+                display: block;
+
+                padding: 10px;
+            }
+
+            paper-card {
+                width: 100%;
+            }
+
+            .post-header {
+                @apply --paper-font-headline;
+                text-overflow: ellipsis;
+                overflow: hidden;
+                white-space: nowrap;
+            }
+
+            .post-light {
+                color: var(--paper-grey-600);
+                word-break: break-all;
+                word-wrap:break-word;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: -webkit-box;
+                -webkit-line-clamp: 7;
+                -webkit-box-orient: vertical;
+            }
+
+            .post-info .date {
+                color: var(--paper-grey-600);
+            }
+
+            paper-button.link {
+                color: var(--app-primary-color);
+            }
+            a {
+                text-decoration: none;
+            }
+        </style>
+        <style include="app-grid-style">
+            :host {
+                --app-grid-columns: 3;
+                --app-grid-gutter: 15px;
+            }
+
+            ul {
+                padding: 0;
+                list-style: none;
+            }
+
+            @media only screen and (max-width: 768px) {
+                :host {
+                    --app-grid-columns: 1;
+                }
+            }
+        </style>
+        <ul class="app-grid">
+            {% for post in paginator.posts %}
+            <li class="item">
+                <paper-card>
+                    <div class="card-content">
+                        <div class="post-header">{{ post.title }}</div>
+                        <div class="post-info">
+                            <span class="user">{{ post.writer }}</span><br>
+                            <span class="date">{{ post.date | date: "%Y-%m-%d %H:%M KST"}}</span>
+                        </div>
+                        <p class="post-light">{{ post.content | strip_html | truncatewords: 70 }}</p>
+                    </div>
+                    <div class="card-actions">
+                        <a href="{{ post.url }}">
+                            <paper-button class="link">Read More</paper-button>
+                        </a>
+                    </div>
+                </paper-card>
+            </li>
+            {% endfor %}
+        </ul>
+        <!-- Page navigation links -->
+        {% if paginator.total_pages > 1 %}
+        <my-pagination>
+            <!-- Left Arrow -->
+            {% if paginator.previous_page %}
+            <my-page-link href="{{ paginator.previous_page_path | replace: 'index.html', '/' | prepend: site.baseurl | replace: '//', '/' }}">
+                <iron-icon icon="my-icons:chevron-left"></iron-icon>
+            </my-page-link>
+            {% else %}
+            <my-page-link disabled><iron-icon icon="my-icons:chevron-left"></iron-icon></my-page-link>
+            {% endif %}
+
+            <!-- Page Numbers -->
+            {% for page in (1..paginator.total_pages) %}
+            {% if page == paginator.page %}
+            <my-page-link active>{{ page }}</my-page-link>
+            {% elsif page == 1 %}
+            <my-page-link href="{{ '/' | prepend: site.baseurl | replace: '//', '/' }}">{{ page }}</my-page-link>
+            {% else %}
+            <my-page-link href="{{ site.paginate_path | prepend: '/' | prepend: site.baseurl | replace: ':num', page | replace: '//', '/' }}">{{ page }}</my-page-link>
+            {% endif %}
+            {% endfor %}
+
+            <!-- Right Arrow -->
+            {% if paginator.next_page %}
+            <my-page-link href="{{ paginator.next_page_path | prepend: site.baseurl }}"><iron-icon icon="my-icons:chevron-right"></iron-icon></my-page-link>
+            {% else %}
+            <my-page-link disabled><iron-icon icon="my-icons:chevron-right"></iron-icon></my-page-link>
+            {% endif %}
+        </my-pagination>
+        {% endif %}
+    </template>
+    <script>
+        class MyView1 extends Polymer.Element {
+            static get is() {
+                return 'my-view1';
+            }
+        }
+
+        window.customElements.define(MyView1.is, MyView1);
+    </script>
+</dom-module>
