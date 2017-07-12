@@ -39,6 +39,6 @@ exclude:
   - Gemfile
   - Gemfile.lock
 timezone: Asia/Seoul
-permalink: "#/:year/:month/:day/:title/"
+permalink: "/post/:year/:month/:day/:title/"
 paginate: 6
-paginate_path: "/src/my-view1/#/page:num/"
+paginate_path: "/paginate/:num/"
