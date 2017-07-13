@@ -1,0 +1,465 @@
+---
+---
+<!--
+@license
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="/bower_components/polymer/polymer-element.html">
+<link rel="import" href="/bower_components/paper-card/paper-card.html">
+<link rel="import" href="/bower_components/paper-styles/paper-styles.html">
+<link rel="import" href="/bower_components/paper-button/paper-button.html">
+<link rel="import" href="/bower_components/app-route/app-route.html">
+<link rel="import" href="/bower_components/iron-ajax/iron-ajax.html">
+
+<link rel="import" href="/src/shared-styles.html">
+
+<dom-module id="my-post">
+    {% raw %}
+    <template>
+        <style include="shared-styles">
+            :host {
+                display: block;
+
+                padding: 10px;
+            }
+
+            paper-card {
+                width: 100%;
+            }
+
+            .post-info .date {
+                color: var(--paper-grey-600);
+            }
+
+            blockquote {
+                color: #828282;
+                border-left: 4px solid #e8e8e8;
+                padding-left: 15px;
+                font-size: 18px;
+                letter-spacing: -1px;
+                font-style: italic;
+            }
+
+            blockquote > :last-child {
+                margin-bottom: 0;
+            }
+
+            pre,
+            code {
+                font-size: 15px;
+                border-radius: 3px;
+            }
+
+            .highlighter-rouge {
+                border: 1px solid #e8e8e8;
+                background-color: #eee;
+            }
+
+            code {
+                padding: 1px 5px;
+            }
+
+            figure.highlight > pre {
+                padding: 8px 12px;
+                overflow-x: auto;
+                background-color: #333;
+            }
+
+            pre > code {
+                border: 0;
+                padding-right: 0;
+                padding-left: 0;
+            }
+
+            figure.highlight {
+                box-shadow: 0 4px 5px 0 rgba(0, 0, 0, 0.14), 0 1px 10px 0 rgba(0, 0, 0, 0.12), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+                border: 0;
+                color: #f8f8f2;
+            }
+
+            .highlight .hll {
+                background-color: #49483e
+            }
+
+            .highlight .c {
+                color: #75715e
+            }
+
+            /* Comment */
+            .highlight .err {
+                color: #960050;
+                background-color: #1e0010
+            }
+
+            /* Error */
+            .highlight .k {
+                color: #66d9ef
+            }
+
+            /* Keyword */
+            .highlight .l {
+                color: #ae81ff
+            }
+
+            /* Literal */
+            .highlight .n {
+                color: #f8f8f2
+            }
+
+            /* Name */
+            .highlight .o {
+                color: #f92672
+            }
+
+            /* Operator */
+            .highlight .p {
+                color: #f8f8f2
+            }
+
+            /* Punctuation */
+            .highlight .cm {
+                color: #75715e
+            }
+
+            /* Comment.Multiline */
+            .highlight .cp {
+                color: #75715e
+            }
+
+            /* Comment.Preproc */
+            .highlight .c1 {
+                color: #75715e
+            }
+
+            /* Comment.Single */
+            .highlight .cs {
+                color: #75715e
+            }
+
+            /* Comment.Special */
+            .highlight .ge {
+                font-style: italic
+            }
+
+            /* Generic.Emph */
+            .highlight .gs {
+                font-weight: bold
+            }
+
+            /* Generic.Strong */
+            .highlight .kc {
+                color: #66d9ef
+            }
+
+            /* Keyword.Constant */
+            .highlight .kd {
+                color: #66d9ef
+            }
+
+            /* Keyword.Declaration */
+            .highlight .kn {
+                color: #f92672
+            }
+
+            /* Keyword.Namespace */
+            .highlight .kp {
+                color: #66d9ef
+            }
+
+            /* Keyword.Pseudo */
+            .highlight .kr {
+                color: #66d9ef
+            }
+
+            /* Keyword.Reserved */
+            .highlight .kt {
+                color: #66d9ef
+            }
+
+            /* Keyword.Type */
+            .highlight .ld {
+                color: #e6db74
+            }
+
+            /* Literal.Date */
+            .highlight .m {
+                color: #ae81ff
+            }
+
+            /* Literal.Number */
+            .highlight .s {
+                color: #e6db74
+            }
+
+            /* Literal.String */
+            .highlight .na {
+                color: #a6e22e
+            }
+
+            /* Name.Attribute */
+            .highlight .nb {
+                color: #f8f8f2
+            }
+
+            /* Name.Builtin */
+            .highlight .nc {
+                color: #a6e22e
+            }
+
+            /* Name.Class */
+            .highlight .no {
+                color: #66d9ef
+            }
+
+            /* Name.Constant */
+            .highlight .nd {
+                color: #a6e22e
+            }
+
+            /* Name.Decorator */
+            .highlight .ni {
+                color: #f8f8f2
+            }
+
+            /* Name.Entity */
+            .highlight .ne {
+                color: #a6e22e
+            }
+
+            /* Name.Exception */
+            .highlight .nf {
+                color: #a6e22e
+            }
+
+            /* Name.Function */
+            .highlight .nl {
+                color: #f8f8f2
+            }
+
+            /* Name.Label */
+            .highlight .nn {
+                color: #f8f8f2
+            }
+
+            /* Name.Namespace */
+            .highlight .nx {
+                color: #a6e22e
+            }
+
+            /* Name.Other */
+            .highlight .py {
+                color: #f8f8f2
+            }
+
+            /* Name.Property */
+            .highlight .nt {
+                color: #f92672
+            }
+
+            /* Name.Tag */
+            .highlight .nv {
+                color: #f8f8f2
+            }
+
+            /* Name.Variable */
+            .highlight .ow {
+                color: #f92672
+            }
+
+            /* Operator.Word */
+            .highlight .w {
+                color: #f8f8f2
+            }
+
+            /* Text.Whitespace */
+            .highlight .mf {
+                color: #ae81ff
+            }
+
+            /* Literal.Number.Float */
+            .highlight .mh {
+                color: #ae81ff
+            }
+
+            /* Literal.Number.Hex */
+            .highlight .mi {
+                color: #ae81ff
+            }
+
+            /* Literal.Number.Integer */
+            .highlight .mo {
+                color: #ae81ff
+            }
+
+            /* Literal.Number.Oct */
+            .highlight .sb {
+                color: #e6db74
+            }
+
+            /* Literal.String.Backtick */
+            .highlight .sc {
+                color: #e6db74
+            }
+
+            /* Literal.String.Char */
+            .highlight .sd {
+                color: #e6db74
+            }
+
+            /* Literal.String.Doc */
+            .highlight .s2 {
+                color: #e6db74
+            }
+
+            /* Literal.String.Double */
+            .highlight .se {
+                color: #ae81ff
+            }
+
+            /* Literal.String.Escape */
+            .highlight .sh {
+                color: #e6db74
+            }
+
+            /* Literal.String.Heredoc */
+            .highlight .si {
+                color: #e6db74
+            }
+
+            /* Literal.String.Interpol */
+            .highlight .sx {
+                color: #e6db74
+            }
+
+            /* Literal.String.Other */
+            .highlight .sr {
+                color: #e6db74
+            }
+
+            /* Literal.String.Regex */
+            .highlight .s1 {
+                color: #e6db74
+            }
+
+            /* Literal.String.Single */
+            .highlight .ss {
+                color: #e6db74
+            }
+
+            /* Literal.String.Symbol */
+            .highlight .bp {
+                color: #f8f8f2
+            }
+
+            /* Name.Builtin.Pseudo */
+            .highlight .vc {
+                color: #f8f8f2
+            }
+
+            /* Name.Variable.Class */
+            .highlight .vg {
+                color: #f8f8f2
+            }
+
+            /* Name.Variable.Global */
+            .highlight .vi {
+                color: #f8f8f2
+            }
+
+            /* Name.Variable.Instance */
+            .highlight .il {
+                color: #ae81ff
+            }
+
+            /* Literal.Number.Integer.Long */
+
+            .highlight .gh {
+            }
+
+            /* Generic Heading & Diff Header */
+            .highlight .gu {
+                color: #75715e;
+            }
+
+            /* Generic.Subheading & Diff Unified/Comment? */
+            .highlight .gd {
+                color: #f92672;
+            }
+
+            /* Generic.Deleted & Diff Deleted */
+            .highlight .gi {
+                color: #a6e22e;
+            }
+
+            /* Generic.Inserted & Diff Inserted */
+        </style>
+        <app-route
+                route="{{route}}"
+                pattern="/:year/:month/:day/:title/"></app-route>
+        <iron-ajax auto url="{{page}}" handle-as="json"
+                   last-response="{{response}}" on-error="_onError" on-response="_onSuccess"></iron-ajax>
+        <paper-card>
+            <div class="card-content">
+                <div class="post-header"><h1>[[ response.title ]]</h1></div>
+                <div class="post-info">
+                    <span class="user">[[ response.writer ]]</span><br>
+                    <span class="date">[[ response.date ]]</span><br>
+                    <span class="modify">Last Update: [[ response.modify ]]</span>
+                </div>
+                <div id="post-content"></div>
+            </div>
+        </paper-card>
+    </template>
+    {% endraw %}
+    <script>
+        class MyPost extends Polymer.Element {
+            static get is() {
+                return 'my-post';
+            }
+
+            static get properties() {
+                return {
+                    page: {
+                        type: String,
+                        reflectToAttribute: true,
+                    },
+                    route: Object,
+                    response: Object,
+                };
+            }
+
+            static get observers() {
+                return [
+                    '_routePageChanged(route.path)',
+                ];
+            }
+
+            _routePageChanged(page) {
+                if (this.route.prefix !== '!/post') {
+                    return;
+                }
+                this.page = '/post' + page;
+            }
+
+            _onError() {
+                document.querySelector('my-app').page = 'view404';
+            }
+
+            _onSuccess() {
+                if (this.response) {
+                    let data = this.response.content.replace(/\+/g, '%20');
+                    let html = decodeURIComponent(data);
+                    this.$['post-content'].innerHTML = html;
+                }
+            }
+        }
+
+        window.customElements.define(MyPost.is, MyPost);
+    </script>
+</dom-module>

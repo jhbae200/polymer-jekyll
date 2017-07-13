@@ -13,57 +13,22 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="/bower_components/polymer/polymer-element.html">
 <link rel="import" href="/bower_components/app-route/app-route.html">
 <link rel="import" href="/bower_components/iron-ajax/iron-ajax.html">
-<link rel="import" href="/bower_components/iron-pages/iron-pages.html">
 <link rel="import" href="/bower_components/app-layout/app-grid/app-grid-style.html">
 <link rel="import" href="/bower_components/paper-card/paper-card.html">
-<link rel="import" href="/bower_components/paper-styles/paper-styles.html">
 <link rel="import" href="/bower_components/paper-button/paper-button.html">
 
+<link rel="import" href="/src/shared-styles.html">
 <link rel="import" href="/src/my-pagination/my-page-link.html">
 <link rel="import" href="/src/my-pagination/my-pagination.html">
 
 <dom-module id="my-home">
     <template>
         {% raw %}
-        <style>
+        <style include="shared-styles">
             :host {
                 display: block;
 
                 padding: 10px;
-            }
-
-            paper-card {
-                width: 100%;
-            }
-
-            .post-header {
-                @apply --paper-font-headline;
-                text-overflow: ellipsis;
-                overflow: hidden;
-                white-space: nowrap;
-            }
-
-            .post-light {
-                color: var(--paper-grey-600);
-                word-break: break-all;
-                word-wrap: break-word;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                display: -webkit-box;
-                -webkit-line-clamp: 7;
-                -webkit-box-orient: vertical;
-            }
-
-            .post-info .date {
-                color: var(--paper-grey-600);
-            }
-
-            paper-button.link {
-                color: var(--app-primary-color);
-            }
-
-            a {
-                text-decoration: none;
             }
         </style>
         <style include="app-grid-style">
@@ -87,8 +52,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 route="{{route}}"
                 pattern="/:page"
                 data="{{routeData}}"></app-route>
-        <iron-ajax auto url="{{_getPosts(routeData.page)}}" handle-as="json"
-                   last-response="{{ajaxResponse}}"></iron-ajax>
+        <iron-ajax auto url="{{page}}" handle-as="json"
+                   last-response="{{ajaxResponse}}" on-error="_onError"></iron-ajax>
         <ul class="app-grid">
             <template is="dom-repeat" items="[[ajaxResponse.items]]">
                 <li class="item">
@@ -97,12 +62,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                             <div class="post-header">[[ item.title ]]</div>
                             <div class="post-info">
                                 <span class="user">[[ item.writer ]]</span><br>
-                                <span class="date">[[ item.date]]</span>
+                                <span class="date">[[ item.date ]]</span>
                             </div>
                             <p class="post-light">[[ _decodeURI(item.content) ]]</p>
                         </div>
                         <div class="card-actions">
-                            <a href="[[ item.url ]]">
+                            <a href="#![[ item.url ]]">
                                 <paper-button class="link">Read More</paper-button>
                             </a>
                         </div>
@@ -113,7 +78,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <my-pagination>
             <!-- Left Arrow -->
             <template is="dom-if" if="[[ ajaxResponse.previous_page ]]">
-                <my-page-link href="#/home/[[ ajaxResponse.previous_page ]]">
+                <my-page-link href="#[[route.prefix]]/[[ ajaxResponse.previous_page ]]">
                     <iron-icon icon="my-icons:chevron-left"></iron-icon>
                 </my-page-link>
             </template>
@@ -127,11 +92,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                     <my-page-link active>[[item]]</my-page-link>
                 </template>
                 <template is="dom-if" if="[[ !_equal(item, ajaxResponse.page) ]]">
-                    <my-page-link href="#/home/[[item]]">[[item]]</my-page-link>
+                    <my-page-link href="#[[route.prefix]]/[[item]]">[[item]]</my-page-link>
                 </template>
             </template>
             <template is="dom-if" if="[[ ajaxResponse.next_page ]]">
-                <my-page-link href="#/home/[[ ajaxResponse.next_page ]]">
+                <my-page-link href="#[[route.prefix]]/[[ ajaxResponse.next_page ]]">
                     <iron-icon icon="my-icons:chevron-right"></iron-icon>
                 </my-page-link>
             </template>
@@ -155,20 +120,30 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                         type: String,
                         reflectToAttribute: true,
                     },
-                    rootPattern: String,
                     routeData: Object,
+                    route: Object,
                 };
+            }
+
+            static get observers() {
+                return [
+                    '_routePageChanged(routeData.page)',
+                ];
+            }
+
+            _routePageChanged(page) {
+                if (this.route.prefix !== '!/home') {
+                    return;
+                }
+                if (page && parseInt(page) !== 1) {
+                    this.page = '/paginate/' + page + '/';
+                } else {
+                    this.page = '/paginate/';
+                }
             }
 
             constructor() {
                 super();
-            }
-
-            _getPosts(page) {
-                if (page && parseInt(page) !== 1) {
-                    return '/paginate/' + page + '/';
-                }
-                return '/paginate/';
             }
 
             _decodeURI(data) {
@@ -181,6 +156,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
             _equal(v1, v2) {
                 return v1 === v2;
+            }
+
+            _onError() {
+                document.querySelector('my-app').page = 'view404';
             }
         }
         window.customElements.define(MyHome.is, MyHome);

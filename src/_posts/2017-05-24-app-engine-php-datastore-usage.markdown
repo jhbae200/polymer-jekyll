@@ -13,7 +13,7 @@ php-gds와 silex를 이용해 간단한 api 서버를 구성해보고 발생하�
 #### app engine php project 생성 및 구성 ####
 먼저 앱 실행에 필요한 app.yaml, 의존성 관리를 위한 [composer][composer]를 구성하도록 한다.
 
-_/app.yaml_
+: _/app.yaml_
 {% highlight yaml %}
 runtime: php55
 #application: [your-project-id]
@@ -37,7 +37,7 @@ handlers:
   script: web/index.php
 {% endhighlight %}
 
-_/composer.json_
+: _/composer.json_
 {% highlight json%}
 {
   "require": {
@@ -188,7 +188,7 @@ isRead를 제외한 모든 데이터가 string으로 변경되어 있다.
 해결을 위해 schema를 정의해준다.  
 원래 datastore에는 schema가 없지만, 이 php-gds라이브러리에서 결과를 가져올 때 schema가 없으면 default로 string으로 가져오게 되어있어서 schema가 필요하다.
 
-_datamodel/DataStore.php_
+: _datamodel/DataStore.php_
 {% highlight php %}
 class DataStore
 {

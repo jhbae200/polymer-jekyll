@@ -1,0 +1,48 @@
+<link rel="import" href="/bower_components/polymer/polymer-element.html">
+<link rel="import" href="/bower_components/paper-styles/paper-styles.html">
+
+<!-- shared styles for all views -->
+<dom-module id="shared-styles">
+    <template>
+        <style>
+            :host {
+                --paper-font-common-base {
+                    font-family: 'Roboto', 'Noto', sans-serif;
+                }
+            }
+            paper-card {
+                width: 100%;
+            }
+
+            .post-header {
+                @apply --paper-font-headline;
+                text-overflow: ellipsis;
+                overflow: hidden;
+                white-space: nowrap;
+            }
+
+            .post-light {
+                @apply --paper-font-body1;
+                color: var(--paper-grey-600);
+                word-break: break-all;
+                word-wrap: break-word;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: -webkit-box;
+                -webkit-line-clamp: 7;
+                -webkit-box-orient: vertical;
+            }
+
+            .post-info .date, .post-info .modify {
+                color: var(--paper-grey-600);
+            }
+
+            paper-button.link {
+                color: var(--app-primary-color);
+            }
+            .card-actions a {
+                text-decoration: none;
+            }
+        </style>
+    </template>
+</dom-module>

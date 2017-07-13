@@ -1,0 +1,58 @@
+---
+---
+<!--
+@license
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="/bower_components/polymer/polymer-element.html">
+<link rel="import" href="/bower_components/paper-card/paper-card.html">
+<link rel="import" href="/bower_components/paper-styles/paper-styles.html">
+<link rel="import" href="/bower_components/paper-button/paper-button.html">
+
+<link rel="import" href="/src/shared-styles.html">
+
+<dom-module id="my-about">
+    <template>
+        <style include="shared-styles">
+            :host {
+                display: block;
+
+                padding: 10px;
+            }
+
+            paper-card {
+                width: 100%;
+            }
+
+            .post-info .date {
+                color: var(--paper-grey-600);
+            }
+        </style>
+        <paper-card>
+            <div class="card-content">
+                <div class="post-header"><h1>{{ page.title }}</h1></div>
+                <div class="post-info">
+                    <span class="date">Last Update: {{ page.update | date: '%Y-%m-%d %H:%M KST' }}</span><br>
+
+                </div>
+                <div id="post-content">{{ content }}</div>
+            </div>
+        </paper-card>
+    </template>
+    <script>
+        class MyAbout extends Polymer.Element {
+            static get is() {
+                return 'my-about';
+            }
+
+        }
+
+        window.customElements.define(MyAbout.is, MyAbout);
+    </script>
+</dom-module>

@@ -1,0 +1,139 @@
+<link rel="import" href="/bower_components/polymer/polymer-element.html">
+<link rel="import" href="/bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="/bower_components/paper-input/paper-input.html">
+<link rel="import" href="/bower_components/paper-card/paper-card.html">
+<link rel="import" href="/bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="/bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="/bower_components/iron-ajax/iron-request.html">
+<link rel="import" href="/bower_components/iron-a11y-keys/iron-a11y-keys.html">
+
+<link rel="import" href="/src/shared-styles.html">
+<link rel="import" href="/src/my-icons.html">
+
+<dom-module id="my-search-bar">
+    <template>
+        <style include="shared-styles">
+            :host {
+                overflow: hidden;
+            }
+            :host([active]) #search {
+                width: 100%;
+                left: 0;
+            }
+            :host([active]) #test {
+                display: none;
+            }
+            #search {
+                background-color: var(--app-primary-color);
+                box-sizing: border-box;
+                position: absolute;
+                top: 0;
+                width: 0;
+                left: calc(100vw - 256px);
+                transition: 1s;
+                overflow: hidden;
+            }
+            #search-list {
+                height: calc(100vh - 64px);
+                background: #eee;
+                width: 100%;
+                color: var(--app-secondary-color);
+                padding: 10px;
+                box-sizing: border-box;
+            }
+            paper-input {
+                height: 64px;
+                --paper-input-container-input-color: #fff;
+                --paper-input-container-color: var(--app-primary-color);
+                --paper-input-container-focus-color: #fff;
+            }
+            paper-card {
+                width: 100%;
+            }
+        </style>
+        <paper-icon-button icon="my-icons:search" on-click="show" id="test"></paper-icon-button>
+        <div id="search">
+            <iron-a11y-keys id="a11y" target="[[target]]" keys="enter"
+                            on-keys-pressed="onEnter"></iron-a11y-keys>
+            <paper-input no-label-float="true" value="{{search::input}}" id="search-input" on-enter="onEnter">
+                <paper-icon-button icon="my-icons:arrow-back" slot="prefix" on-click="hide"></paper-icon-button>
+                <paper-icon-button icon="my-icons:close" slot="suffix" on-click="clear"></paper-icon-button>
+            </paper-input>
+            <iron-request id="ajax" response="{{response}}"></iron-request>
+            <div id="search-list">
+                <template is="dom-repeat" items="[[result]]">
+                    <paper-card>
+                        <div class="card-content">
+                            <div class="post-header">[[ item.title ]]</div>
+                            <div class="post-info">
+                                <span class="user">[[ item.writer ]]</span><br>
+                                <span class="date">[[ item.date ]]</span>
+                            </div>
+                            <p class="post-light">[[ _decodeURI(item.content) ]]</p>
+                        </div>
+                        <div class="card-actions">
+                            <a href="#![[ item.url ]]">
+                                <paper-button class="link">Read More</paper-button>
+                            </a>
+                        </div>
+                    </paper-card>
+                </template>
+            </div>
+        </div>
+    </template>
+    <script>
+        class MySaerchBar extends Polymer.Element {
+            constructor() {
+                super();
+            }
+            static get is() {
+                return 'my-search-bar';
+            }
+            static get properties() {
+                return {
+                    active: {
+                        type: Boolean,
+                        reflectToAttribute: true,
+                        notify: true,
+                    },
+                    search: {
+                        type: String,
+                        notify: true,
+                    },
+                    target: {
+                        type: Object,
+                    },
+                    response: {
+                        type: Object,
+                    },
+                    result: {
+                        type: Array,
+                    },
+                };
+            }
+            show() {
+                this.active = true;
+                this.target = this.$['search-input'];
+                this.$.ajax.send({
+                    url: '/tags',
+                    handleAs: 'json',
+                });
+            }
+            hide() {
+                this.active = false;
+            }
+            onEnter() {
+                console.log(this.response[this.search]);
+                this.result = this.response[this.search];
+            }
+            clear() {
+                this.search = '';
+                this.onEnter();
+            }
+            _decodeURI(data) {
+                return decodeURIComponent(data.replace(/\+/g, '%20'));
+            }
+        }
+        window.customElements.define(MySaerchBar.is, MySaerchBar);
+    </script>
+</dom-module>

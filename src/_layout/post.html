@@ -1,9 +1,0 @@
-{
-    "title": "{{ post.title | escape }}",
-    "date": "{{ post.date | date: '%Y-%m-%d %H:%M KST' }}",
-    "modify": "{{ post.update | date: '%Y-%m-%d %H:%M KST' }}",
-    "content": "{{ post.content | url_encode }}",
-    "url": "{{ post.url }}",
-    "writer": "{{ post.writer | escape }}",
-    "tags": ["{{ post.tags | join: '","' }}"]
-}
