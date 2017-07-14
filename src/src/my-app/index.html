@@ -27,11 +27,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="/src/shared-styles.html">
 <link rel="import" href="/src/my-icons.html">
 <link rel="import" href="/src/my-search-bar.html">
+<link rel="import" href="/src/my-snackbar.html">
 
-<link rel="lazy-import" href="/src/my-home/">
-<link rel="lazy-import" href="/src/my-post/">
-<link rel="lazy-import" href="/src/my-about/">
+<link rel="lazy-import" href="/src/my-home/index.html">
+<link rel="lazy-import" href="/src/my-post/index.html">
+<link rel="lazy-import" href="/src/my-about/index.html">
 <link rel="lazy-import" href="/src/my-view404.html">
+<link rel="import" href="/src/my-network-warning.html">
 
 <dom-module id="my-app">
     {% raw %}
@@ -87,6 +89,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 border: none;
                 height: 1px;
             }
+
             iron-icon {
                 fill: var(--google-grey-700);
             }
@@ -102,17 +105,28 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             <!-- Drawer content -->
             <app-drawer id="drawer" slot="drawer">
                 <app-toolbar>Menu</app-toolbar>
-                <iron-selector selected="[[routeData.page]]" attr-for-selected="name" class="drawer-list" role="navigation">
-                    <a name="home" href="#!/home/"><iron-icon icon="my-icons:home"></iron-icon> Home</a>
-                    <a name="about" href="#!/about"><iron-icon icon="my-icons:person"></iron-icon> About</a>
-                    <a name="feed" href="/feed.xml" target="_blank"><iron-icon icon="my-icons:rss-feed"></iron-icon> Rss Feed</a>
+                <iron-selector selected="[[routeData.page]]" attr-for-selected="name" class="drawer-list"
+                               role="navigation">
+                    <a name="home" href="#!/home/">
+                        <iron-icon icon="my-icons:home"></iron-icon>
+                        Home</a>
+                    <a name="about" href="#!/about">
+                        <iron-icon icon="my-icons:person"></iron-icon>
+                        About</a>
+                    <a name="feed" href="/feed.xml" target="_blank">
+                        <iron-icon icon="my-icons:rss-feed"></iron-icon>
+                        Rss Feed</a>
                     <hr>
                     {% endraw %}
                     {% if site.github_username %}
-                    <a name="github" href="https://github.com/{{site.github_username}}"><iron-icon icon="my-icons:github"></iron-icon> Github</a>
+                    <a name="github" href="https://github.com/{{site.github_username}}">
+                        <iron-icon icon="my-icons:github"></iron-icon>
+                        Github</a>
                     {% endif %}
                     {% if site.email %}
-                    <a name="email" href="mailto:{{site.email}}"><iron-icon icon="my-icons:email"></iron-icon> Email</a>
+                    <a name="email" href="mailto:{{site.email}}">
+                        <iron-icon icon="my-icons:email"></iron-icon>
+                        Email</a>
                     {% endif %}
                     {% raw %}
                     <hr>
@@ -135,11 +149,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                         selected="[[page]]"
                         attr-for-selected="name"
                         fallback-selection="view404"
-                        role="main">
-                    <my-home name="home" route="{{subroute}}"></my-home>
-                    <my-post name="post" route="{{subroute}}"></my-post>
+                        role="main"
+                        selected-attribute="selected">
+                    <my-home name="home" route="[[subroute]]"></my-home>
+                    <my-post name="post" route="[[subroute]]"></my-post>
                     <my-about name="about"></my-about>
                     <my-view404 name="view404"></my-view404>
+                    <my-network-warning name="network-warning"></my-network-warning>
                 </iron-pages>
             </app-header-layout>
         </app-drawer-layout>
@@ -159,6 +175,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                         reflectToAttribute: true,
                         observer: '_pageChanged',
                     },
+                    oldPage: {
+                        type: String,
+                    },
                     rootPattern: String,
                     routeData: Object,
                     subroute: String,
@@ -176,29 +195,65 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
             constructor() {
                 super();
+                window.performance && performance.mark && performance.mark('my-app.created');
+            }
+
+            ready() {
+                super.ready();
+                // listen for online/offline
+                Polymer.RenderStatus.afterNextRender(this, () => {
+                    window.addEventListener('online', (e)=>this._notifyNetworkStatus(e));
+                    window.addEventListener('offline', (e)=>this._notifyNetworkStatus(e));
+                });
+            }
+
+            _notifyNetworkStatus() {
+                let oldOffline = this.offline;
+                this.offline = !navigator.onLine;
+                // Show the snackbar if the user is offline when starting a new session
+                // or if the network status changed.
+                if (this.offline || (!this.offline && oldOffline === true)) {
+                    if (!this._networkSnackbar) {
+                        this._networkSnackbar = document.createElement('my-snackbar');
+                        this.root.appendChild(this._networkSnackbar);
+                    }
+                    this._networkSnackbar.innerHTML = this.offline ?
+                        'You are offline' : 'You are online';
+                    this._networkSnackbar.open();
+                }
+                if (this.offline === false) {
+                    this.page = this.oldPage;
+                }
             }
 
             _routePageChanged(page) {
                 this.searchActive = false;
                 if (page === undefined) {
+                    this.set('route.path', '!/home/');
                     this.page = 'home';
-                    this.set('route.path', this.page);
+                } else {
+                    this.page = page || 'home';
                 }
-                this.page = page || 'home';
             }
 
             _pageChanged(page) {
-                // Load page import on demand. Show 404 page if fails
-                let resolvedPageUrl = this.resolveUrl('../my-' + page + '/');
+                if (this.offline === true || this.page === 'network-warning') {
+                    if (this.page !== 'network-warning') {
+                        this.oldPage = this.page;
+                    }
+                    this.page = 'network-warning';
+                    return;
+                }
+                let resolvedPageUrl = this.resolveUrl('/src/my-' + page + '/');
                 Polymer.importHref(
                     resolvedPageUrl,
                     null,
-                    this._showPage404.bind(this),
+                    this._showErrorPage.bind(this),
                     true);
             }
 
 
-            _showPage404() {
+            _showErrorPage() {
                 this.page = 'view404';
             }
         }

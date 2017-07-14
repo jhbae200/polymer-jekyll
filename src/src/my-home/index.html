@@ -122,6 +122,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                     },
                     routeData: Object,
                     route: Object,
+                    selected: {
+                        type: Boolean,
+                        value: false,
+                        observer: '_selectedChanged',
+                    },
                 };
             }
 
@@ -144,6 +149,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
             constructor() {
                 super();
+            }
+
+            _selectedChanged() {
+                let title = '{{ site.title }}';
+                let description = `{{ site.description }}`;
+                document.querySelector('title').innerHTML = title;
+                document.querySelector('meta[name="description"]').content = description;
+                document.querySelector('meta[property="og:title"]').content = title;
+                document.querySelector('meta[property="og:description"]').content = description;
+                document.querySelector('meta[property="og:url"]').content = '{{ site.url }}{{ site.baseurl }}/#!/home/';
             }
 
             _decodeURI(data) {

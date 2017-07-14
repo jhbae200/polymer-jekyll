@@ -1,6 +1,8 @@
+<link rel="import" href="/bower_components/polymer/polymer-element.html">
 <link rel="import" href="/bower_components/paper-ripple/paper-ripple.html">
 
 <dom-module id="my-page-link">
+    {% raw %}
     <template>
         <style>
             :host {
@@ -45,6 +47,7 @@
             <slot></slot>
         </a></li>
     </template>
+    {% endraw %}
     <script>
         class MyPageLink extends Polymer.Element {
             static get is() {

@@ -11,6 +11,7 @@
 <link rel="import" href="/src/my-icons.html">
 
 <dom-module id="my-search-bar">
+    {% raw %}
     <template>
         <style include="shared-styles">
             :host {
@@ -81,6 +82,7 @@
             </div>
         </div>
     </template>
+    {% endraw %}
     <script>
         class MySaerchBar extends Polymer.Element {
             constructor() {
