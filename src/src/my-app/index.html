@@ -1,15 +1,5 @@
 ---
 ---
-<!--
-@license
-Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
-This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
-The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
-The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
-Code distributed by Google as part of the polymer project is also
-subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
--->
-
 <link rel="import" href="/bower_components/polymer/polymer-element.html">
 <link rel="import" href="/bower_components/app-layout/app-drawer/app-drawer.html">
 <link rel="import" href="/bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
@@ -24,16 +14,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="/bower_components/iron-selector/iron-selector.html">
 <link rel="import" href="/bower_components/paper-icon-button/paper-icon-button.html">
 
-<link rel="import" href="/src/shared-styles.html">
-<link rel="import" href="/src/my-icons.html">
-<link rel="import" href="/src/my-search-bar.html">
-<link rel="import" href="/src/my-snackbar.html">
+<link rel="import" href="../shared-styles.html">
+<link rel="import" href="../my-icons.html">
+<link rel="import" href="../my-search-bar.html">
+<link rel="import" href="../my-snackbar.html">
 
-<link rel="lazy-import" href="/src/my-home/index.html">
-<link rel="lazy-import" href="/src/my-post/index.html">
-<link rel="lazy-import" href="/src/my-about/index.html">
-<link rel="lazy-import" href="/src/my-view404.html">
-<link rel="import" href="/src/my-network-warning.html">
+<link rel="lazy-import" href="../my-home/index.html">
+<link rel="lazy-import" href="../my-post/index.html">
+<link rel="lazy-import" href="../my-about/index.html">
+<link rel="lazy-import" href="../my-view404.html">
+<link rel="import" href="../my-network-warning.html">
 
 <dom-module id="my-app">
     {% raw %}
@@ -221,8 +211,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                         'You are offline' : 'You are online';
                     this._networkSnackbar.open();
                 }
-                if (this.offline === false) {
+                if (!this.offline) {
                     this.page = this.oldPage;
+                    this.oldPage = undefined;
                 }
             }
 
@@ -237,13 +228,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             }
 
             _pageChanged(page) {
-                if (this.offline === true || this.page === 'network-warning') {
-                    if (this.page !== 'network-warning') {
-                        this.oldPage = this.page;
-                    }
-                    this.page = 'network-warning';
-                    return;
-                }
                 let resolvedPageUrl = this.resolveUrl('/src/my-' + page + '/');
                 Polymer.importHref(
                     resolvedPageUrl,
@@ -254,7 +238,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 
             _showErrorPage() {
-                this.page = 'view404';
+                if (this.offline) {
+                    this.oldPage = this.page;
+                    this.page = 'network-warning';
+                }else {
+                    this.page = 'view404';
+                }
             }
         }
 

@@ -7,8 +7,8 @@
 <link rel="import" href="/bower_components/iron-ajax/iron-request.html">
 <link rel="import" href="/bower_components/iron-a11y-keys/iron-a11y-keys.html">
 
-<link rel="import" href="/src/shared-styles.html">
-<link rel="import" href="/src/my-icons.html">
+<link rel="import" href="shared-styles.html">
+<link rel="import" href="my-icons.html">
 
 <dom-module id="my-search-bar">
     {% raw %}
@@ -31,7 +31,7 @@
                 top: 0;
                 width: 0;
                 left: calc(100vw - 256px);
-                transition: 1s;
+                transition: 200ms;
                 overflow: hidden;
             }
             #search-list {
@@ -51,6 +51,11 @@
             paper-card {
                 width: 100%;
             }
+            @media only screen and (max-width: 768px) {
+                #search {
+                    left: calc(100vw);
+                }
+            }
         </style>
         <paper-icon-button icon="my-icons:search" on-click="show" id="test"></paper-icon-button>
         <div id="search">
@@ -65,7 +70,7 @@
                 <template is="dom-repeat" items="[[result]]">
                     <paper-card>
                         <div class="card-content">
-                            <div class="post-header">[[ item.title ]]</div>
+                            <div class="post-header"><h1>[[ item.title ]]</h1></div>
                             <div class="post-info">
                                 <span class="user">[[ item.writer ]]</span><br>
                                 <span class="date">[[ item.date ]]</span>
@@ -125,8 +130,7 @@
                 this.active = false;
             }
             onEnter() {
-                console.log(this.response[this.search]);
-                this.result = this.response[this.search];
+                this.result = this.response[this.search.toLowerCase()];
             }
             clear() {
                 this.search = '';

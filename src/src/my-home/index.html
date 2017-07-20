@@ -1,15 +1,5 @@
 ---
 ---
-<!--
-@license
-Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
-This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
-The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
-The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
-Code distributed by Google as part of the polymer project is also
-subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
--->
-
 <link rel="import" href="/bower_components/polymer/polymer-element.html">
 <link rel="import" href="/bower_components/app-route/app-route.html">
 <link rel="import" href="/bower_components/iron-ajax/iron-ajax.html">
@@ -17,18 +7,22 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="/bower_components/paper-card/paper-card.html">
 <link rel="import" href="/bower_components/paper-button/paper-button.html">
 
-<link rel="import" href="/src/shared-styles.html">
-<link rel="import" href="/src/my-pagination/my-page-link.html">
-<link rel="import" href="/src/my-pagination/my-pagination.html">
+<link rel="import" href="../shared-styles.html">
+<link rel="import" href="../my-pagination/my-page-link.html">
+<link rel="import" href="../my-pagination/my-pagination.html">
 
 <dom-module id="my-home">
     <template>
         {% raw %}
         <style include="shared-styles">
-            :host {
-                display: block;
-
-                padding: 10px;
+            .post-header h1 {
+                font-size: 1.5em;
+                min-height: 72px;
+            }
+            @media only screen and (max-width: 768px) {
+                .post-header h1 {
+                    min-height: 0;
+                }
             }
         </style>
         <style include="app-grid-style">
@@ -39,6 +33,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
             ul {
                 padding: 0;
+                margin: 0;
                 list-style: none;
             }
 
@@ -59,7 +54,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 <li class="item">
                     <paper-card>
                         <div class="card-content">
-                            <div class="post-header">[[ item.title ]]</div>
+                            <div class="post-header"><h1>[[ item.title ]]</h1></div>
                             <div class="post-info">
                                 <span class="user">[[ item.writer ]]</span><br>
                                 <span class="date">[[ item.date ]]</span>

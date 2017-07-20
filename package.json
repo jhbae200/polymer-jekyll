@@ -1,15 +1,30 @@
 {
-  "name": "polymer-starter-kit",
+  "name": "polymer-jekyll",
   "license": "BSD-3-Clause",
   "devDependencies": {
     "eslint": "^3.19.0",
     "eslint-config-google": "^0.7.0",
-    "eslint-plugin-html": "^2.0.0"
+    "eslint-plugin-html": "^2.0.0",
+    "gulp": "gulpjs/gulp#4.0",
+    "gulp-if": "^2.0.0",
+    "gulp-imagemin": "^3.1.0",
+    "merge-stream": "^1.0.1",
+    "polymer-build": "^2.0.0",
+    "through2": "^2.0.3",
+    "babel-core": "^6.24.1",
+    "babel-plugin-external-helpers": "^6.22.0",
+    "babel-preset-babili": "0.0.10",
+    "babel-preset-es2015": "^6.18.0",
+    "css-slam": "^1.1.0",
+    "del": "^2.2.2",
+    "html-minifier": "^3.0.1"
   },
   "scripts": {
     "lint": "npm run lint:javascript",
     "lint:javascript": "eslint . --ext js,html --ignore-path .gitignore",
     "test": "polymer test",
-    "test:integration": "polymer build # test that psk builds without error with the CLI"
+    "test:integration": "polymer build # test that psk builds without error with the CLI",
+    "build": "gulp build --gulpfile src/gulpfile.js",
+    "asdf": "gulp --help"
   }
 }

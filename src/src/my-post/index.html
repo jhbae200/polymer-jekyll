@@ -1,15 +1,5 @@
 ---
 ---
-<!--
-@license
-Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
-This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
-The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
-The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
-Code distributed by Google as part of the polymer project is also
-subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
--->
-
 <link rel="import" href="/bower_components/polymer/polymer-element.html">
 <link rel="import" href="/bower_components/paper-card/paper-card.html">
 <link rel="import" href="/bower_components/paper-styles/paper-styles.html">
@@ -17,7 +7,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="/bower_components/app-route/app-route.html">
 <link rel="import" href="/bower_components/iron-ajax/iron-ajax.html">
 
-<link rel="import" href="/src/shared-styles.html">
+<link rel="import" href="../shared-styles.html">
 
 <dom-module id="my-post">
     {% raw %}
@@ -31,6 +21,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
             paper-card {
                 width: 100%;
+            }
+
+            .post-header h1{
+                text-overflow: clip;
+                overflow: visible;
+                white-space: normal;
             }
 
             .post-info .date {
@@ -409,10 +405,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 <div class="post-header"><h1>[[ response.title ]]</h1></div>
                 <div class="post-info">
                     <span class="user">[[ response.writer ]]</span><br>
-                    <span class="date">[[ response.date ]]</span><br>
-                    <span class="modify">Last Update: [[ response.modify ]]</span>
+                    <span class="date">[[ response.date ]]</span>
+                    <template is="dom-if" if="[[ response.modify ]]">
+                        <br>
+                        <span class="modify">Last Update: [[ response.modify ]]</span>
+                    </template>
                 </div>
                 <div id="post-content"></div>
+            </div>
+            <div class="card-actions">
+                <!-- TODO: Disqus Comment 추가하기 -->
             </div>
         </paper-card>
     </template>
@@ -452,15 +454,19 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 this.page = '/post' + page;
             }
 
-            _onError() {
-                document.querySelector('my-app').page = 'view404';
+            _onError(e) {
+                if (e.detail.request.status === 404) {
+                    document.querySelector('my-app').page = 'view404';
+                }
+                if (e.detail.request.status === 0) {
+                    document.querySelector('my-app').page = 'network-warning';
+                }
             }
 
             _onSuccess() {
                 if (this.response) {
                     let data = this.response.content.replace(/\+/g, '%20');
-                    let html = decodeURIComponent(data);
-                    this.$['post-content'].innerHTML = html;
+                    this.$['post-content'].innerHTML = decodeURIComponent(data);
                 }
                 this._selectedChanged();
             }

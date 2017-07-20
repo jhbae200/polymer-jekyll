@@ -2,13 +2,13 @@
   "entrypoint": "index.html",
   "shell": "src/my-app/index.html",
   "fragments": [
-    "src/my-app/index.html",
     "src/my-home/index.html",
     "src/my-post/index.html",
     "src/my-view404.html",
     "src/my-network-warning.html"
   ],
   "sources": [
+    "_layouts/about.html",
     "src/**/*",
     "bower.json"
   ],
@@ -23,7 +23,6 @@
   },
   "builds": [
     {
-      "name": "app",
       "bundle": true,
       "html": {
         "minify": true
@@ -35,7 +34,18 @@
         "minify": true,
         "compile": true
       },
-      "addServiceWorker": true
+      "addServiceWorker": true,
+      "passingPattern": [
+        "_layouts/*",
+        "_posts/*",
+        "paginate/*",
+        "images/**/*",
+        "tags.html",
+        "manifest.json",
+        "sitemap.*",
+        "feed.xml",
+        "about.md"
+      ]
     }
   ]
 }
