@@ -34,7 +34,7 @@ module.exports = {
             },
         },
         {
-            urlPattern: /\/paginate\/(.*.html|.*.\/.*.html)/,
+            urlPattern: /\/paginate\/(.*.\/)?/,
             handler: 'fastest',
             options: {
                 cache: {

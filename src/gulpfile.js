@@ -1,8 +1,6 @@
 /**
  * Created by Jinhwan on 2017-07-18.
  */
-
-
 'use strict';
 
 const del = require('del');
@@ -32,6 +30,13 @@ function waitFor(stream) {
         stream.on('end', resolve);
         stream.on('error', reject);
     });
+}
+
+function pipeStreams(streams) {
+    return Array.prototype.concat.apply([], streams)
+        .reduce((a, b) => {
+            return a.pipe(b);
+        });
 }
 
 function build() {
@@ -107,13 +112,6 @@ function build() {
                 resolve();
             });
     });
-}
-
-function pipeStreams(streams) {
-    return Array.prototype.concat.apply([], streams)
-        .reduce((a, b) => {
-            return a.pipe(b);
-        });
 }
 
 gulp.task('build', build);

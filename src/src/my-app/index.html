@@ -22,7 +22,7 @@
 <link rel="lazy-import" href="../my-home/index.html">
 <link rel="lazy-import" href="../my-post/index.html">
 <link rel="lazy-import" href="../my-about/index.html">
-<link rel="lazy-import" href="../my-view404.html">
+<link rel="import" href="../my-view404.html">
 <link rel="import" href="../my-network-warning.html">
 
 <dom-module id="my-app">
@@ -103,13 +103,13 @@
                     <a name="about" href="#!/about">
                         <iron-icon icon="my-icons:person"></iron-icon>
                         About</a>
-                    <a name="feed" href="/feed.xml" target="_blank">
+                    <a name="feed" href="/feed.xml" target="_blank" rel="noopener">
                         <iron-icon icon="my-icons:rss-feed"></iron-icon>
                         Rss Feed</a>
                     <hr>
                     {% endraw %}
                     {% if site.github_username %}
-                    <a name="github" href="https://github.com/{{site.github_username}}">
+                    <a name="github" href="https://github.com/{{site.github_username}}" target="_blank" rel="noopener">
                         <iron-icon icon="my-icons:github"></iron-icon>
                         Github</a>
                     {% endif %}
@@ -192,8 +192,8 @@
                 super.ready();
                 // listen for online/offline
                 Polymer.RenderStatus.afterNextRender(this, () => {
-                    window.addEventListener('online', (e)=>this._notifyNetworkStatus(e));
-                    window.addEventListener('offline', (e)=>this._notifyNetworkStatus(e));
+                    window.addEventListener('online', (e) => this._notifyNetworkStatus(e));
+                    window.addEventListener('offline', (e) => this._notifyNetworkStatus(e));
                 });
             }
 
@@ -211,9 +211,8 @@
                         'You are offline' : 'You are online';
                     this._networkSnackbar.open();
                 }
-                if (!this.offline) {
+                if ((!this.offline && oldOffline === true) && this.oldPage) {
                     this.page = this.oldPage;
-                    this.oldPage = undefined;
                 }
             }
 
@@ -225,10 +224,17 @@
                 } else {
                     this.page = page || 'home';
                 }
+                this.oldPage = this.page;
             }
 
             _pageChanged(page) {
-                let resolvedPageUrl = this.resolveUrl('/src/my-' + page + '/');
+                let src = '/src/my-' + page;
+                if (page === 'network-warning' || page === 'view404') {
+                    return;
+                } else {
+                    src = src + '/index.html';
+                }
+                let resolvedPageUrl = this.resolveUrl(src);
                 Polymer.importHref(
                     resolvedPageUrl,
                     null,
@@ -238,12 +244,7 @@
 
 
             _showErrorPage() {
-                if (this.offline) {
-                    this.oldPage = this.page;
-                    this.page = 'network-warning';
-                }else {
-                    this.page = 'view404';
-                }
+                this.page = 'view404';
             }
         }
 

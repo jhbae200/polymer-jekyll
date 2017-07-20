@@ -1,7 +1,9 @@
+---
+---
 {
-  "name": "My App",
-  "short_name": "My App",
-  "start_url": "/#!/home?homescreen=1",
+  "name": "{{ site.title }}",
+  "short_name": "{{ site.title }}",
+  "start_url": "/index.html",
   "display": "standalone",
   "theme_color": "#3f51b5",
   "background_color": "#3f51b5",

@@ -23,7 +23,7 @@
                 width: 100%;
             }
 
-            .post-header h1{
+            .post-header h1 {
                 text-overflow: clip;
                 overflow: visible;
                 white-space: normal;
@@ -465,19 +465,25 @@
 
             _onSuccess() {
                 if (this.response) {
-                    let data = this.response.content.replace(/\+/g, '%20');
+                    const data = this.response.content.replace(/\+/g, '%20');
                     this.$['post-content'].innerHTML = decodeURIComponent(data);
                 }
                 this._selectedChanged();
             }
 
             _selectedChanged() {
-                if (this.response) {
-                    document.querySelector('title').innerHTML = this.response.title;
-                    document.querySelector('meta[name="description"]').content = this.response.description;
-                    document.querySelector('meta[property="og:title"]').content = this.response.title;
-                    document.querySelector('meta[property="og:description"]').content = this.response.description;
-                    document.querySelector('meta[property="og:url"]').content = '{{ site.url }}{{ site.baseurl }}/#!' + this.response.url;
+                if (this.selected) {
+                    if (this.response) {
+                        document.querySelector('title').innerHTML = this.response.title;
+                        document.querySelector('meta[name="description"]').content = this.response.description;
+                        document.querySelector('meta[property="og:title"]').content = this.response.title;
+                        document.querySelector('meta[property="og:description"]').content = this.response.description;
+                        document.querySelector('meta[property="og:url"]').content = '{{ site.url }}{{ site.baseurl }}/#!' + this.response.url;
+                    } else {
+                        const tmp = this.page;
+                        this.page = undefined;
+                        this.page = tmp;
+                    }
                 }
             }
         }
