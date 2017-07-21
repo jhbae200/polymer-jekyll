@@ -2,13 +2,12 @@
  * Created by Jinhwan on 2017-07-18.
  */
 'use strict';
-
+const path = require('path');
 const del = require('del');
 const gulp = require('gulp');
 const mergeStream = require('merge-stream');
 const polymerBuild = require('polymer-build');
 
-const swPrecacheConfig = require('./sw-precache-config.js');
 const polymerJson = require('./polymer.json');
 const options = polymerJson.builds[0];
 const optimizeOptions = {
@@ -95,14 +94,20 @@ function build() {
             })
             .then(() => {
                 if (options.addServiceWorker) {
+                  const swPrecacheConfigPath = path.resolve(
+                      polymerProject.config.root,
+                      options.swPrecacheConfig || 'sw-precache-config.js');
+                  let swConfig = null;
+                  if (options.addServiceWorker) {
+                    swConfig = require(swPrecacheConfigPath);
+                  }
                     // Okay, now let's generate the Service Worker
                     console.log('Generating the Service Worker...');
                     return polymerBuild.addServiceWorker({
                         project: polymerProject,
                         buildRoot: buildDirectory,
                         bundled: !!(options.bundle),
-                        //TODO: 2017-07-18 polymer.json 따라가지 않음.
-                        swPrecacheConfig: swPrecacheConfig
+                        swPrecacheConfig: swConfig
                     });
                 }
             })

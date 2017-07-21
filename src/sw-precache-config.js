@@ -11,57 +11,56 @@
 /* eslint-env node */
 
 module.exports = {
-    staticFileGlobs: [
-        '/index.html',
-        '/manifest.json',
-        '/bower_components/webcomponentsjs/webcomponents-loader.js',
-        '/src/**/*',
-        '/images/**/*',
-    ],
-    navigateFallback: 'index.html',
-    runtimeCaching: [
-        {
-            urlPattern: /fonts\.gstatic\.com/,
-            handler: 'cacheFirst',
+  staticFileGlobs: [
+    '/index.html',
+    '/manifest.json',
+    '/bower_components/webcomponentsjs/webcomponents-loader.js',
+    '/src/**/*',
+  ],
+  navigateFallback: 'index.html',
+  runtimeCaching: [
+    {
+      urlPattern: /\/paginate\/(.*.\/)?/,
+      handler: 'fastest',
+      options: {
+        cache: {
+          maxEntries: 100,
+          name: 'data-cache',
         },
-        {
-            urlPattern: /\/bower_components\/webcomponentsjs\/.*.js/,
-            handler: 'fastest',
-            options: {
-                cache: {
-                    name: 'webcomponentsjs-polyfills-cache',
-                },
-            },
+      },
+    },
+    {
+      urlPattern: /fonts\.gstatic\.com/,
+      handler: 'cacheFirst',
+    },
+    {
+      urlPattern: /\/bower_components\/webcomponentsjs\/.*.js/,
+      handler: 'fastest',
+      options: {
+        cache: {
+          name: 'webcomponentsjs-polyfills-cache',
         },
-        {
-            urlPattern: /\/paginate\/(.*.\/)?/,
-            handler: 'fastest',
-            options: {
-                cache: {
-                    maxEntries: 100,
-                    name: 'data-cache',
-                },
-            },
+      },
+    },
+    {
+      urlPattern: /\/tags\//,
+      handler: 'fastest',
+      options: {
+        cache: {
+          maxEntries: 100,
+          name: 'search-cache',
         },
-        {
-            urlPattern: /\/tags\//,
-            handler: 'fastest',
-            options: {
-                cache: {
-                    maxEntries: 100,
-                    name: 'search-cache',
-                },
-            },
+      },
+    },
+    {
+      urlPattern: /\/post\/.*./,
+      handler: 'fastest',
+      options: {
+        cache: {
+          maxEntries: 100,
+          name: 'post-cache',
         },
-        {
-            urlPattern: /\/post\/.*./,
-            handler: 'fastest',
-            options: {
-                cache: {
-                    maxEntries: 100,
-                    name: 'post-cache',
-                },
-            },
-        },
-    ],
+      },
+    },
+  ],
 };
