@@ -24,7 +24,6 @@
     "lint:javascript": "eslint . --ext js,html --ignore-path .gitignore",
     "test": "polymer test",
     "test:integration": "polymer build # test that psk builds without error with the CLI",
-    "build": "gulp build --gulpfile src/gulpfile.js",
-    "asdf": "gulp --help"
+    "build": "gulp build --gulpfile src/gulpfile.js"
   }
 }
